@@ -1,0 +1,11 @@
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/UkimCtfWebsiteApplication.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/controller/HomeController.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/controller/TeamMemberController.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/model/Category.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/model/TeamMember.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/repository/CategoryRepository.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/repository/TeamMemberRepository.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/service/CategoryService.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/service/TeamMemberService.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/service/impl/CategoryServiceImpl.java
+/home/jovan/Desktop/ukim-ctf-website/src/main/java/mk/ukim/finki/wp/ukimctfwebsite/service/impl/TeamMemberServiceImpl.java

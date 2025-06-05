@@ -1,0 +1,22 @@
+<section class="container d-flex justify-content-center vh-50" style="padding-top: 2%">
+    <div class="col-md-6 col-lg-4">
+        <div th:if="${param.error}" class="alert alert-danger text-center mb-3">
+            Invalid username or password.
+        </div>
+        <form th:action="@{/login}" method="post" class="border p-4">
+            <div class="mb-3 text-center">
+                <label class="form-label">Username:
+                    <input type="text" name="username" class="form-control text-center">
+                </label>
+            </div>
+            <div class="mb-3 text-center">
+                <label class="form-label">Password:
+                    <input type="password" name="password" class="form-control text-center">
+                </label>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Sign In" class="btn btn-primary px-4">
+            </div>
+        </form>
+    </div>
+</section>

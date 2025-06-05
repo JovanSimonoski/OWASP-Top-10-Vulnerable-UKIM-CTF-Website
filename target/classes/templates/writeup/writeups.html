@@ -1,0 +1,97 @@
+<section>
+    <div class="container mt-4">
+        <h2 class="text-center">Writeups</h2>
+
+        <form th:action="@{/writeups}" method="get" class="mb-3">
+            <div class="row g-2">
+                <div class="col-md-2">
+                    <input type="text" name="title" th:value="${title}" class="form-control"
+                           placeholder="Filter by title">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="body" th:value="${body}" class="form-control" placeholder="Filter by body">
+                </div>
+                <div class="col-md-2">
+                    <select name="categoryId" class="form-select">
+                        <option value="" selected>All Categories</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+                                th:selected="${category.id == categoryId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="eventId" class="form-select">
+                        <option value="" selected>All Events</option>
+                        <option th:each="event : ${events}" th:value="${event.id}" th:text="${event.title}"
+                                th:selected="${event.id == eventId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="teamMemberId" class="form-select">
+                        <option value="" selected>All Team Members</option>
+                        <option th:each="member : ${teamMembers}" th:value="${member.id}" th:text="${member.nickname}"
+                                th:selected="${member.id == teamMemberId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </div>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Event</th>
+                <th>Author</th>
+                <th>Published Date</th>
+                <th sec:authorize="isAuthenticated()">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="writeup : ${page.content}">
+                <td>
+                    <a th:href="@{/writeups/{id}(id=${writeup.id})}" th:text="${writeup.title}"></a>
+                </td>
+                <td th:text="${writeup.category?.name}"></td>
+                <td th:text="${writeup.event?.title}"></td>
+                <td th:text="${writeup.teamMemberAuthor?.nickname}"></td>
+                <td th:text="${#dates.format(writeup.publishedDate, 'yyyy-MM-dd')}"></td>
+                <td sec:authorize="isAuthenticated()">
+                    <a sec:authorize="isAuthenticated()" th:href="@{/admin/writeups/edit/{id}(id=${writeup.id})}"
+                       class="btn btn-warning btn-sm">Edit</a>
+                    <form sec:authorize="isAuthenticated()" th:action="@{/admin/writeups/delete/{id}(id=${writeup.id})}"
+                          method="post" class="d-inline">
+                        <button sec:authorize="isAuthenticated()" type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this writeup?');">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div sec:authorize="isAuthenticated()" class="d-flex justify-content-end mb-3">
+            <a sec:authorize="isAuthenticated()" href="/admin/writeups/create" class="btn btn-success">Create
+                Writeup</a>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/writeups(pageNum=${page.number}, pageSize=${page.size})}">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link" th:text="${page.number + 1} + ' of ' + ${page.totalPages}"></span>
+                    </li>
+                    <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/writeups(pageNum=${page.number + 2}, pageSize=${page.size})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>

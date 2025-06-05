@@ -1,0 +1,131 @@
+<section>
+  <div class="container mt-4">
+    <h2 th:text="${writeup} ? 'Edit Writeup' : 'Create Writeup'"></h2>
+
+    <form th:action="${writeup} ? @{/admin/writeups/edit/{id}(id=${writeup.id})} : @{/admin/writeups/create}"
+          method="post" enctype="multipart/form-data" class="p-4">
+
+      <div class="mb-3">
+        <label for="title" class="form-label fw-bold">Title</label>
+        <input type="text" class="form-control" id="title" name="title" th:value="${writeup?.title}" required>
+      </div>
+
+      <input type="hidden" id="body" name="body" th:value="${writeup?.body}" required>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold">Category</label>
+          <select class="form-select" name="category">
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${writeup?.category?.id == category.id}"></option>
+          </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold">Event</label>
+          <select class="form-select" name="event">
+            <option th:each="event : ${events}" th:value="${event.id}" th:text="${event.title}" th:selected="${writeup?.event?.id == event.id}"></option>
+          </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold">Author</label>
+          <select class="form-select" name="teamMember">
+            <option th:each="teamMember : ${teamMembers}" th:value="${teamMember.id}" th:text="${teamMember.nickname}" th:selected="${writeup?.teamMemberAuthor?.id == teamMember.id}"></option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Upload Images</label>
+        <div class="input-group">
+          <input type="file" id="imageUpload" name="images" accept="image/*" multiple class="form-control" onchange="previewImages(event)">
+        </div>
+        <div id="imagePreview" class="mt-3 d-flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Previously Uploaded Images</label>
+        <div id="existingImages" class="d-flex flex-wrap gap-2">
+          <div th:each="image : ${images}" class="position-relative">
+            <img th:src="@{{filename}(filename=${image})}" alt="Uploaded Image" class="preview-image">
+            <button type="button" class="remove-btn btn btn-sm btn-danger position-absolute top-0 end-0"
+                    th:attr="onclick=|removeExistingImage(this, '${image}')|">
+              ✖
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <input type="hidden" id="removedImages" name="removedImages" value="">
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-4">Save</button>
+        <a href="/writeups" class="btn btn-secondary px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  let removedImagesList = [];
+  let uploadedFiles = [];
+
+  function previewImages(event) {
+    let files = event.target.files;
+    let previewContainer = document.getElementById('imagePreview');
+    let fileInput = document.getElementById('imageUpload');
+    let dataTransfer = new DataTransfer();
+
+    uploadedFiles.forEach(file => dataTransfer.items.add(file));
+
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i];
+      uploadedFiles.push(file);
+      dataTransfer.items.add(file);
+
+      let reader = new FileReader();
+      reader.onload = function (e) {
+        let imgDiv = document.createElement('div');
+        imgDiv.classList.add('position-relative', 'm-2');
+
+        let img = document.createElement('img');
+        img.src = e.target.result;
+        img.classList.add('preview-image');
+
+        let removeButton = document.createElement('button');
+        removeButton.innerText = '✖';
+        removeButton.classList.add('remove-btn', 'btn', 'btn-sm', 'btn-danger', 'position-absolute', 'top-0', 'end-0');
+        removeButton.onclick = function () {
+          removeUploadedImage(imgDiv, file);
+        };
+
+        imgDiv.appendChild(img);
+        imgDiv.appendChild(removeButton);
+        previewContainer.appendChild(imgDiv);
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.files = dataTransfer.files;
+  }
+
+  function removeUploadedImage(imageContainer, file) {
+    let fileInput = document.getElementById('imageUpload');
+    let dataTransfer = new DataTransfer();
+
+    uploadedFiles = uploadedFiles.filter(f => f !== file);
+
+    uploadedFiles.forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files;
+
+    imageContainer.remove();
+  }
+
+  function removeExistingImage(button, filename) {
+    let imageContainer = button.parentElement;
+    imageContainer.remove();
+    removedImagesList.push(filename);
+    document.getElementById('removedImages').value = removedImagesList.join(',');
+  }
+</script>

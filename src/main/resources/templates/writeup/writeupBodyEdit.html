@@ -1,0 +1,84 @@
+<div class="container-fluid mt-4">
+    <section class="row" style="height: 80vh;">
+        <div class="col-md-6 d-flex flex-column h-100">
+            <label for="body" class="form-label fw-bold">Markdown Editor</label>
+            <div class="flex-grow-1 d-flex flex-column" style="min-height: 0;">
+                <textarea class="form-control bg-dark text-light flex-grow-1"
+                          id="body" name="body" required
+                          th:text="${writeup.body}"
+                          style="font-family: monospace; overflow: auto; resize: none;"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary mt-2 align-self-start" onclick="renderMarkdown()">Preview
+            </button>
+        </div>
+
+        <div class="col-md-6 d-flex flex-column h-100">
+            <label class="form-label fw-bold">Preview</label>
+            <div class="card bg-dark text-light p-3 flex-grow-1 d-flex border-white"
+                 style="overflow: auto; min-height: 0;">
+                <div id="preview" class="markdown-body flex-grow-1"></div>
+            </div>
+
+            <form th:action="@{/admin/writeups/editBody}" method="post" class="mt-2 d-flex justify-content-end">
+                <input type="hidden" name="id" th:value="${writeup.id}"/>
+                <input type="hidden" name="body" id="body-copy" value=""/>
+                <button type="submit" class="btn btn-success"
+                        onclick="document.getElementById('body-copy').value = document.getElementById('body').value; return confirm('Are you sure you want to submit this writeup?');">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <section class="mt-4">
+        <h5 class="fw-bold">Images</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-dark text-light d-flex align-items-center" th:each="image : ${images}">
+                <img th:src="${image}" alt="Image" class="me-2" style="width: 200px; height: auto; object-fit: cover;">
+                <span th:text="${image}" class="me-2 copy-text"></span>
+                <button class="btn btn-sm btn-outline-light copy-btn" type="button">Copy</button>
+            </li>
+        </ul>
+    </section>
+</div>
+
+<script>
+    function renderMarkdown() {
+        const markdownText = document.getElementById('body').value;
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        fetch('/admin/markdown/render', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+                [csrfHeader]: csrfToken
+            },
+            body: markdownText,
+            credentials: 'include'
+        })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('preview').innerHTML = html;
+            })
+            .catch(error => console.error('Error rendering markdown:', error));
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll(".copy-btn");
+        buttons.forEach((btn) => {
+            btn.addEventListener("click", function () {
+                const span = this.previousElementSibling;
+                const text = span.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    this.textContent = "Copied!";
+                    setTimeout(() => {
+                        this.textContent = "Copy";
+                    }, 1500);
+                });
+            });
+        });
+    });
+</script>

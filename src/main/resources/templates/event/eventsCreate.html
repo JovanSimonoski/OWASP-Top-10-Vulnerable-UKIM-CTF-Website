@@ -1,0 +1,37 @@
+<section>
+  <div class="container mt-4">
+    <h2 th:text="${event} ? 'Edit Event' : 'Create Event'"></h2>
+
+    <form th:action="${event} ? @{/admin/events/edit/{id}(id=${event.id})} : @{/admin/events/create}"
+          method="post" class="row g-3">
+      <div class="col-12">
+        <label for="title" class="form-label">Event Title</label>
+        <input type="text" id="title" name="title" class="form-control"
+               th:value="${event} ? ${event.title} : ''" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="startDate" class="form-label">Event Start Date</label>
+        <input type="date" id="startDate" name="startDate" class="form-control"
+               th:value="${event} ? ${#dates.format(event.startDate, 'yyyy-MM-dd')} : ''" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="endDate" class="form-label">Event End Date</label>
+        <input type="date" id="endDate" name="endDate" class="form-control"
+               th:value="${event} ? ${#dates.format(event.endDate, 'yyyy-MM-dd')} : ''" required>
+      </div>
+
+      <div class="col-12">
+        <label for="url" class="form-label">Event URL</label>
+        <input type="url" id="url" name="url" class="form-control"
+               th:value="${event} ? ${event.url} : ''" required>
+      </div>
+
+      <div class="col-12 mt-3 text-center">
+        <button type="submit" class="btn btn-success me-2">Save</button>
+        <a href="/admin/events" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>

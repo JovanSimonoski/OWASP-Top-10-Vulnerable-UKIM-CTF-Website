@@ -1,0 +1,44 @@
+<section>
+  <div class="container mt-4">
+    <h2 class="text-center">Team Members</h2>
+
+    <div class="mb-3">
+      <a href="/admin/team/create" class="btn btn-primary">Add New Team Member</a>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Nickname</th>
+        <th>Biography</th>
+        <th>GitHub</th>
+        <th>Categories</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="teamMember : ${teamMembers}">
+        <td th:text="${teamMember.id}"></td>
+        <td th:text="${teamMember.nickname}"></td>
+        <td th:text="${teamMember.shortBiography}"></td>
+        <td><a th:href="${teamMember.githubLink}" target="_blank" th:text="${teamMember.githubLink}"></a></td>
+        <td>
+          <ul class="mb-0">
+            <li th:each="category : ${teamMember.categoryList}" th:text="${category.name}"></li>
+          </ul>
+        </td>
+        <td>
+          <a th:href="@{'/admin/team/edit/' + ${teamMember.id}}" class="btn btn-warning btn-sm">Edit</a>
+          <form th:action="@{'/admin/team/delete/' + ${teamMember.id}}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure you want to delete this team member?');">
+              Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

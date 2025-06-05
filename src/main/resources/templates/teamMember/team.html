@@ -1,0 +1,43 @@
+<section>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="team-heading">Meet the Team</h2>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="member : ${teamMembers}">
+                <div class="card h-100 border-0 shadow-sm text-center bg-dark text-light" style="padding-top: 5%">
+                    <img th:src="${member.imagePath}" class="card-img-top"
+                         alt="Profile Picture"
+                         style="width: 100px; height: 100px; object-fit: cover; margin: auto; border-radius: 50%;">
+
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${member.nickname}"></h5>
+                        <p class="card-text" th:text="${member.shortBiography}"></p>
+                        <div>
+                            <span th:each="category : ${member.categoryList}"
+                                  th:classappend="${category.name == 'CRYPTO' ? 'bg-danger' :
+                                                   category.name == 'PWN' ? 'bg-warning text-dark' :
+                                                   category.name == 'FULLPWN' ? 'bg-light text-dark' :
+                                                   category.name == 'FORENSICS' ? 'bg-info' :
+                                                   category.name == 'WEB' ? 'bg-success' :
+                                                   category.name == 'BLOCKCHAIN' ? 'bg-primary' :
+                                                   category.name == 'REV' ? 'bg-secondary' : 'bg-light text-dark'}"
+                                  class="badge me-1"
+                                  th:text="${category.name}">
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer text-center border-0">
+                        <a th:href="${member.githubLink}" target="_blank" class="text-light">
+                            <i class="fab fa-github fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
