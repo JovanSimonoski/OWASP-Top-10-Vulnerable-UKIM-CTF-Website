@@ -1,6 +1,9 @@
 package mk.ukim.finki.wp.ukimctfwebsite.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import mk.ukim.finki.wp.ukimctfwebsite.model.Category;
+import mk.ukim.finki.wp.ukimctfwebsite.model.Event;
 import mk.ukim.finki.wp.ukimctfwebsite.model.TeamMember;
 import mk.ukim.finki.wp.ukimctfwebsite.model.exceptions.CategoryNotFoundException;
 import mk.ukim.finki.wp.ukimctfwebsite.repository.CategoryRepository;
@@ -14,6 +17,10 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final TeamMemberRepository teamMemberRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, TeamMemberRepository teamMemberRepository) {
         this.categoryRepository = categoryRepository;
@@ -73,5 +80,11 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository.deleteById(id);
 
         return category;
+    }
+
+    @Override
+    public List<Category> searchUnsafe(String query) {
+        String sql = "SELECT * FROM category WHERE name LIKE '%" + query + "%'";
+        return entityManager.createNativeQuery(sql, Category.class).getResultList();
     }
 }

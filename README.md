@@ -18,16 +18,16 @@ A05:2021 – Security Misconfiguration
 
 ---------------------------------------------------------------------------------------------------
 
-A06:2021 – Vulnerable and Outdated Components
+A06:2021 – Vulnerable and Outdated Components - ✅ DONE (DOM XSS - jQuery 1.6.4)
 >Example: Using a known-vulnerable version of Apache Struts that led to the 2017 Equifax breach.
 
-A07:2021 – Identification and Authentication Failures
+A07:2021 – Identification and Authentication Failures - ✅ DONE (Not blocking access after many failed login attempts)
 >Example: Allowing unlimited login attempts without any account lockout or CAPTCHA (brute-force vulnerable).
 
 A08:2021 – Software and Data Integrity Failures
 >Example: Using unverified plugins or scripts (e.g., from a public GitHub repo) without validating digital signatures.
 
-A09:2021 – Security Logging and Monitoring Failures
+A09:2021 – Security Logging and Monitoring Failures - ✅ DONE (Not logging failed login attempts)
 >Example: Not logging failed login attempts, so you can't detect a brute-force attack.
 
 A10:2021 – Server-Side Request Forgery - ✅ DONE (SSRF)

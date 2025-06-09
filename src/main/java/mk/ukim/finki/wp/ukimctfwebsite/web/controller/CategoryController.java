@@ -55,4 +55,11 @@ public class CategoryController {
         this.categoryService.delete(id);
         return "redirect:/admin/categories";
     }
+
+    @GetMapping("/search")
+    public String search(@RequestParam String query, Model model) {
+        model.addAttribute("categories", this.categoryService.searchUnsafe(query));
+        model.addAttribute("bodyContent", "category/categories");
+        return "master-template";
+    }
 }

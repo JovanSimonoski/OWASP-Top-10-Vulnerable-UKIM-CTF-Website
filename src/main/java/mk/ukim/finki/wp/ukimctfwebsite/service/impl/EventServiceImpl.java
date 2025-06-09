@@ -15,6 +15,7 @@ import jakarta.persistence.PersistenceContext;
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
