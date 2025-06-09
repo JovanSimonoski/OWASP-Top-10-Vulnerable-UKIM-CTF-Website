@@ -46,14 +46,14 @@
     function renderMarkdown() {
         const markdownText = document.getElementById('body').value;
 
-        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+        // const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
         fetch('/admin/markdown/render', {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain',
-                [csrfHeader]: csrfToken
+                'Content-Type': 'text/plain'
+                // [csrfHeader]: csrfToken
             },
             body: markdownText,
             credentials: 'include'

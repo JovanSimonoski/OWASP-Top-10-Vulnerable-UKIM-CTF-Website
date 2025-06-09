@@ -1,0 +1,283 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4 text-success">
+                <i class="fas fa-terminal me-2"></i>Latest Security News
+            </h2>
+        </div>
+    </div>
+
+    <div id="loading" class="text-center py-5">
+        <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Fetching latest news...</p>
+    </div>
+
+    <div id="error" class="alert alert-danger d-none" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span id="error-message">Failed to load news. Please try again later.</span>
+    </div>
+
+    <div id="news-container" class="row g-4 d-none">
+    </div>
+
+    <div class="text-center mt-4">
+        <button id="refresh-btn" class="btn btn-outline-success">
+            <i class="fas fa-sync-alt me-2"></i>Refresh News
+        </button>
+    </div>
+</div>
+
+<style>
+    .news-card {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border: 1px solid #444;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .news-card:hover {
+        border-color: #28a745;
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .news-card .card-body {
+        color: #ffffff;
+    }
+
+    .news-title {
+        color: #28a745;
+        text-decoration: none;
+        font-weight: bold;
+        line-height: 1.4;
+    }
+
+    .news-title:hover {
+        color: #20c997;
+        text-decoration: underline;
+    }
+
+    .news-meta {
+        color: #adb5bd;
+        font-size: 0.9rem;
+    }
+
+    .news-summary {
+        color: #dee2e6;
+        line-height: 1.6;
+    }
+
+    .news-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .news-tag {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+</style>
+
+<script>
+    class HackerNewsLoader {
+        constructor() {
+            this.newsContainer = document.getElementById('news-container');
+            this.loadingElement = document.getElementById('loading');
+            this.errorElement = document.getElementById('error');
+            this.errorMessage = document.getElementById('error-message');
+            this.refreshBtn = document.getElementById('refresh-btn');
+
+            this.init();
+        }
+
+        init() {
+            this.refreshBtn.addEventListener('click', () => this.loadNews());
+            this.loadNews();
+        }
+
+        async loadNews() {
+            this.showLoading();
+
+            try {
+                const news = await this.fetchHackerNews();
+
+                if (news && news.length > 0) {
+                    this.displayNews(news);
+                } else {
+                    throw new Error('No news articles found');
+                }
+            } catch (error) {
+                this.showError(error.message);
+            }
+        }
+
+        async fetchHackerNews() {
+            // Get story IDs from backend
+            const response = await fetch('/api/news/fetch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    url: 'https://hacker-news.firebaseio.com/v0/topstories.json'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const storyIds = await response.json();
+
+            // Get first 12 stories
+            const stories = await Promise.all(
+                storyIds.slice(0, 12).map(async id => {
+                    const storyResponse = await fetch('/api/news/fetch', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            url: `https://hacker-news.firebaseio.com/v0/item/${id}.json`
+                        })
+                    });
+                    return await storyResponse.json();
+                })
+            );
+
+            return stories.filter(story => story && story.title).map(story => ({
+                title: story.title,
+                url: story.url || `https://news.ycombinator.com/item?id=${story.id}`,
+                summary: story.text ? this.stripHtml(story.text).substring(0, 150) + '...' : 'Click to read more...',
+                publishedAt: new Date(story.time * 1000).toLocaleDateString(),
+                author: story.by || 'Anonymous',
+                tags: this.generateTags(story.title)
+            }));
+        }
+
+        async fetchCustomNews(newsUrl) {
+            const response = await fetch('/api/news/fetch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    url: newsUrl
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Process the raw data (adapt based on your API structure)
+            if (Array.isArray(data)) {
+                return data.slice(0, 12).map(article => ({
+                    title: article.title || article.headline || 'No title',
+                    url: article.url || article.link || '#',
+                    summary: (article.description || article.summary || 'No description').substring(0, 150) + '...',
+                    publishedAt: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Unknown date',
+                    author: article.author || 'Unknown',
+                    tags: this.generateTags(article.title || '')
+                }));
+            } else if (data.articles) {
+                return data.articles.slice(0, 12).map(article => ({
+                    title: article.title || 'No title',
+                    url: article.url || '#',
+                    summary: (article.description || 'No description').substring(0, 150) + '...',
+                    publishedAt: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Unknown date',
+                    author: article.author || 'Unknown',
+                    tags: this.generateTags(article.title || '')
+                }));
+            }
+
+            return [];
+        }
+
+        generateTags(title) {
+            const keywords = ['security', 'hacking', 'vulnerability', 'exploit', 'breach', 'malware', 'phishing', 'ransomware', 'crypto', 'ai', 'machine learning', 'privacy', 'data'];
+            const titleLower = title.toLowerCase();
+            return keywords.filter(keyword => titleLower.includes(keyword)).slice(0, 3);
+        }
+
+        stripHtml(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+
+        displayNews(newsItems) {
+            this.newsContainer.innerHTML = '';
+
+            newsItems.forEach(item => {
+                const newsCard = this.createNewsCard(item);
+                this.newsContainer.appendChild(newsCard);
+            });
+
+            this.hideLoading();
+            this.newsContainer.classList.remove('d-none');
+        }
+
+        createNewsCard(item) {
+            const col = document.createElement('div');
+            col.className = 'col-lg-4 col-md-6 col-sm-12';
+
+            col.innerHTML = `
+            <div class="card news-card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="${item.url}" target="_blank" class="news-title">
+                            ${item.title}
+                        </a>
+                    </h5>
+                    <div class="news-meta mb-3">
+                        <i class="fas fa-calendar-alt me-1"></i>${item.publishedAt}
+                        <span class="mx-2">•</span>
+                        <i class="fas fa-user me-1"></i>${item.author}
+                    </div>
+                    <p class="card-text news-summary">
+                        ${item.summary}
+                    </p>
+                    <div class="news-tags">
+                        ${item.tags.map(tag => `<span class="news-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+            return col;
+        }
+
+        showLoading() {
+            this.loadingElement.classList.remove('d-none');
+            this.newsContainer.classList.add('d-none');
+            this.errorElement.classList.add('d-none');
+        }
+
+        hideLoading() {
+            this.loadingElement.classList.add('d-none');
+        }
+
+        showError(message) {
+            this.hideLoading();
+            this.errorMessage.textContent = message;
+            this.errorElement.classList.remove('d-none');
+            this.newsContainer.classList.add('d-none');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        new HackerNewsLoader();
+    });
+</script>

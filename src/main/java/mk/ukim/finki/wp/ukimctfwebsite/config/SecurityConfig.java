@@ -28,9 +28,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").authenticated()
-                        .requestMatchers("/", "/team", "/writeups", "/writeups/{id}", "/error").permitAll()
+                        .requestMatchers("/", "/team", "/writeups", "/writeups/{id}", "/error", "/news", "/api", "/api/news/", "/api/news/fetch").permitAll()
                         .requestMatchers("/images/**", "/uploads/**", "/css/**").permitAll() // TODO: Check this :)
                         .anyRequest().authenticated()
                 )
