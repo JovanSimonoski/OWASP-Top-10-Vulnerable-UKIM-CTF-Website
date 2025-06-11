@@ -172,13 +172,25 @@ public class WriteupController {
 
     private void saveImage(MultipartFile imageFile, Long id) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = imageFile.getOriginalFilename();
+
+            String fileName = getNextImageTitle(id);
+//            String fileName = imageFile.getOriginalFilename();
             Path uploadDir = Paths.get("uploads/images/writeups/" + id + "/");
             Files.createDirectories(uploadDir);
             assert fileName != null;
             Path imagePath = uploadDir.resolve(fileName);
             Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
         }
+    }
+
+    private String getNextImageTitle(Long id){
+        File folder = new File("uploads/images/writeups/" + id);
+        String[] files = folder.list();
+
+        if (files != null) {
+            return String.valueOf(Integer.parseInt(files[files.length - 1]) + 1);
+        }
+        return "0";
     }
 
     private static void deleteImages(List<String> images, Long id) throws IOException {
