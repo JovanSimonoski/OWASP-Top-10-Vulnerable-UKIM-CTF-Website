@@ -4,7 +4,7 @@
 A01:2021 – Broken Access Control - ✅ DONE (CSRF)
 >Example: A web app allows users to access /admin/dashboard without verifying if the user is actually an admin.
 
-A02:2021 – Cryptographic Failures
+A02:2021 – Cryptographic Failures - ✅ DONE (MD5 hashing with no salting for passwords)
 >Example: Storing passwords using MD5 hashing without a salt, allowing for easy brute-force or rainbow table attacks.
 
 A03:2021 – Injection - ✅ DONE (SQL and XSS)
@@ -13,7 +13,7 @@ A03:2021 – Injection - ✅ DONE (SQL and XSS)
 A04:2021 – Insecure Design
 >Example: An e-commerce site has no rate limiting on checkout attempts, enabling automated discount abuse.
 
-A05:2021 – Security Misconfiguration
+A05:2021 – Security Misconfiguration - ✅ DONE (admin user has 'admin' for password)
 >Example: Leaving default credentials (admin/admin) on a production server’s management console.
 
 ---------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ A06:2021 – Vulnerable and Outdated Components - ✅ DONE (DOM XSS - jQuery 1.6
 A07:2021 – Identification and Authentication Failures - ✅ DONE (Not blocking access after many failed login attempts)
 >Example: Allowing unlimited login attempts without any account lockout or CAPTCHA (brute-force vulnerable).
 
-A08:2021 – Software and Data Integrity Failures
+A08:2021 – Software and Data Integrity Failures - ✅ DONE (visiting /vuln/a08 executes js script from public repo)
 >Example: Using unverified plugins or scripts (e.g., from a public GitHub repo) without validating digital signatures.
 
 A09:2021 – Security Logging and Monitoring Failures - ✅ DONE (Not logging failed login attempts)

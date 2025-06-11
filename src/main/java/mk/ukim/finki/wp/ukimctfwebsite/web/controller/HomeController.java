@@ -15,4 +15,10 @@ public class HomeController {
         model.addAttribute("bodyContent", "home");
         return "master-template";
     }
+
+    @GetMapping("/vuln/a08")
+    public String getA08VulnPage(Model model) {
+        model.addAttribute("bodyContent", "vuln/a08demo");
+        return "master-template";
+    }
 }

@@ -46,14 +46,14 @@ public class DataInitializer {
         if (userRepository.count() == 0) {
             User admin = new User();
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setPassword(passwordEncoder.encode("admin"));
             admin.setRole("ROLE_ADMIN");
             admin.setEmail("jovan.simonoski@students.finki.ukim.mk");
             userRepository.save(admin);
 
             User user = new User();
             user.setUsername("user");
-            user.setPassword(passwordEncoder.encode("user123"));
+            user.setPassword(passwordEncoder.encode("user"));
             user.setRole("ROLE_USER");
             user.setEmail("jovan.simonoski.1@students.finki.ukim.mk");
             userRepository.save(user);
