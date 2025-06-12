@@ -295,7 +295,8 @@ if (url == null || !url.startsWith("https://hacker-news.firebaseio.com/")) {
         }
 ```
 
-
+Безбедна верзија на кодот без ранливости (би требало да биде без ранливости :D )
+https://github.com/JovanSimonoski/ukim-ctf-website
 
 
 
